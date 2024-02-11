@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hourglass.schedule.mapper.DailyStopMapper">
+    <resultMap id="DailyStopMap" type="com.hourglass.schedule.entity.DailyStop">
+        <id column="daily_stop_id" jdbcType="BIGINT" property="dailyStopId"/>
+        <result column="daily_train_id" jdbcType="BIGINT" property="dailyTrainId"/>
+        <result column="stop_index" jdbcType="INTEGER" property="stopIndex"/>
+        <result column="station_name" jdbcType="VARCHAR" property="stationName"/>
+        <result column="arrival_time" jdbcType="TIMESTAMP" property="arrivalTime"/>
+        <result column="departure_time" jdbcType="TIMESTAMP" property="departureTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.hourglass.schedule.entity.DailyStop">
+        insert into daily_stop (daily_stop_id, daily_train_id, stop_index, station_name, arrival_time, departure_time)
+        values
+        (#{dailyStopId}, #{dailyTrainId}, #{stopIndex}, #{stationName}, #{arrivalTime}, #{departureTime})
+    </insert>
+</mapper>

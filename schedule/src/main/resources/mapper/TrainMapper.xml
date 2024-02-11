@@ -31,6 +31,9 @@
     <select id="selectByTrainCode" resultMap="TrainMap">
         select * from train where train_code = #{trainCode}
     </select>
+    <select id="selectAll" resultMap="TrainMap">
+        select * from train
+    </select>
 
 
 </mapper>

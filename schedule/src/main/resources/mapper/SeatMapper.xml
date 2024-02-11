@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hourglass.schedule.mapper.SeatMapper">
+    <resultMap id="SeatMap" type="com.hourglass.schedule.entity.Seat">
+        <id column="seat_id" property="seatId"/>
+        <result column="daily_train_id" property="dailyTrainId"/>
+        <result column="carriage_index" property="carriageIndex"/>
+        <result column="row_count" property="rowCount"/>
+        <result column="column_mark" property="columnMark"/>
+        <result column="seat_state" property="seatState"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.hourglass.schedule.entity.Seat">
+        insert into seat
+        <set>
+            <if test="seatId != null">seat_id = #{seatId},</if>
+            <if test="dailyTrainId != null">daily_train_id = #{dailyTrainId},</if>
+            <if test="carriageIndex != null">carriage_index = #{carriageIndex},</if>
+            <if test="rowCount != null">row_count = #{rowCount},</if>
+            <if test="columnMark != null">column_mark = #{columnMark},</if>
+            <if test="seatState != null">seat_state = #{seatState}</if>
+        </set>
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into seat (seat_id, daily_train_id, carriage_index, row_count, column_mark, seat_state) values
+            <foreach collection="seatList" item="seat" separator=",">
+                (#{seat.seatId}, #{seat.dailyTrainId}, #{seat.carriageIndex}, #{seat.rowCount}, #{seat.columnMark}, #{seat.seatState})
+            </foreach>
+    </insert>
+
+</mapper>
