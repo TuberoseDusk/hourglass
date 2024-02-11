@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hourglass.schedule.mapper.StopMapper">
+    <resultMap id="StopMap" type="com.hourglass.schedule.entity.Stop">
+        <id column="train_code" property="trainCode"/>
+        <id column="stop_index" property="stopIndex"/>
+        <result column="station_name" property="stationName"/>
+        <result column="arrival_time" property="arrivalTime"/>
+        <result column="departure_time" property="departureTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.hourglass.schedule.entity.Stop">
+        insert into stop
+        <set>
+            <if test="trainCode != null">train_code = #{trainCode},</if>
+            <if test="stopIndex != null">stop_index = #{stopIndex},</if>
+            <if test="stationName != null">station_name = #{stationName},</if>
+            <if test="arrivalTime != null">arrival_time = #{arrivalTime},</if>
+            <if test="departureTime != null">departure_time = #{departureTime}</if>
+        </set>
+    </insert>
+
+    <select id="selectByTrainCodeAndIndex" resultMap="StopMap">
+        select * from stop where train_code = #{trainCode} and stop_index = #{stopIndex}
+    </select>
+    <select id="selectByTrainCodeOrderByIndexDesc" resultMap="StopMap">
+        select * from stop where train_code = #{trainCode} order by stop_index desc
+    </select>
+
+    <update id="updateSelectiveByTrainCodeAndIndex" parameterType="com.hourglass.schedule.entity.Stop">
+        update stop
+            <set>
+                <if test="stationName != null">station_name = #{stationName},</if>
+                <if test="arrivalTime != null">arrival_time = #{arrivalTime},</if>
+                <if test="departureTime != null">departure_time = #{departureTime}</if>
+            </set>
+        where train_code = #{trainCode} and stop_index = #{stopIndex}
+    </update>
+    <update id="updateIndexByTrainCodeAndStationName">
+        update stop set stop_index = #{stopIndex}
+            where train_code = #{trainCode} and station_name = #{stationName}
+    </update>
+</mapper>

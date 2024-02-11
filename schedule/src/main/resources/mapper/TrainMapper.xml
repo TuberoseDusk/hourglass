@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hourglass.schedule.mapper.TrainMapper">
+    <resultMap id="TrainMap" type="com.hourglass.schedule.entity.Train">
+        <id column="train_code" property="trainCode"/>
+        <result column="train_type" property="trainType"/>
+        <result column="start_station" property="startStation"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_station" property="endStation"/>
+        <result column="end_time" property="endTime"/>
+        <result column="carriages" property="carriages"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.hourglass.schedule.entity.Train">
+        insert into train
+            <set>
+                <if test="trainCode != null">train_code = #{trainCode},</if>
+                <if test="trainType != null">train_type = #{trainType},</if>
+                <if test="startStation != null">start_station = #{startStation},</if>
+                <if test="startTime != null">start_time = #{startTime},</if>
+                <if test="endStation != null">end_station = #{endStation},</if>
+                <if test="endTime != null">end_time = #{endTime}</if>
+                <if test="carriages != null">carriages = #{carriages}</if>
+            </set>
+    </insert>
+    <update id="updateCarriagesByTrainCode">
+        update train set carriages = #{carriages} where train_code = #{trainCode}
+    </update>
+    <select id="selectByTrainCode" resultMap="TrainMap">
+        select * from train where train_code = #{trainCode}
+    </select>
+
+
+</mapper>

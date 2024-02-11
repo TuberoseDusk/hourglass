@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hourglass.schedule.mapper.CarriageMapper">
+    <resultMap id="CarriageMap" type="com.hourglass.schedule.entity.Carriage">
+        <id column="carriage_type" property="carriageType"/>
+        <result column="row_count" property="rowCount"/>
+        <result column="column_count" property="columnCount"/>
+        <result column="seat_mark" property="seatMark"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.hourglass.schedule.entity.Carriage">
+        insert into carriage
+            <set>
+                <if test="carriageType != null"> carriage_type = #{carriageType},</if>
+                <if test="rowCount != null"> row_count = #{rowCount},</if>
+                <if test="columnCount != null"> column_count = #{columnCount},</if>
+                <if test="seatMark != null"> seat_mark = #{seatMark}</if>
+            </set>
+    </insert>
+    <select id="selectByType" resultMap="CarriageMap">
+        select * from carriage where carriage_type = #{carriageType}
+    </select>
+
+</mapper>

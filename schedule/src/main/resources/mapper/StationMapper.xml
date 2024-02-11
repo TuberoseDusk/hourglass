@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hourglass.schedule.mapper.StationMapper">
+    <resultMap id="StationMap" type="com.hourglass.schedule.entity.Station">
+        <id column="station_name" property="stationName"/>
+        <result column="station_state" property="stationState"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.hourglass.schedule.entity.Station">
+        insert into station
+        <set>
+            <if test="stationName != null"> station_name = #{stationName},</if>
+            <if test="stationState != null"> station_state = #{stationState},</if>
+        </set>
+    </insert>
+    <select id="selectByName" resultMap="StationMap">
+        select * from station where station_name = #{stationName}
+    </select>
+
+</mapper>

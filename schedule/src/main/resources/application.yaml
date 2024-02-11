@@ -1,0 +1,24 @@
+server:
+  port: 7701
+  servlet:
+    context-path: /schedule
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/hourglass?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    local-cache-scope: statement
+
+logging:
+  level:
+    com:
+      hourglass:
+        schedule:
+          mapper: trace
+
