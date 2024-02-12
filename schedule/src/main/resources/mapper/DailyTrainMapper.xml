@@ -31,6 +31,9 @@
     <select id="selectByStartDateAndTrainCode" resultMap="DailyTrainMap">
         select * from daily_train where start_date = #{startDate} and train_code = #{trainCode}
     </select>
+    <select id="selectByDailyTrainId" resultMap="DailyTrainMap">
+        select * from daily_train where daily_train_id = #{dailyTrainId}
+    </select>
 
 
 </mapper>

@@ -1,12 +1,14 @@
 package com.hourglass.schedule.service;
 
 
+import cn.hutool.core.bean.BeanUtil;
 import com.hourglass.common.enums.ResponseEnum;
 import com.hourglass.common.exception.BusinessException;
 import com.hourglass.common.util.Snowflake;
 import com.hourglass.schedule.entity.*;
 import com.hourglass.schedule.mapper.*;
 import com.hourglass.schedule.request.DailySeatGenerateRequest;
+import com.hourglass.schedule.response.SectionQueryResponse;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,9 @@ public class DailyTrainService {
 
     @Resource
     private CarriageMapper carriageMapper;
+
+    @Resource
+    private StationMapper stationMapper;
 
     /**
      *按照基础数据创建每日列车数据
@@ -117,5 +122,28 @@ public class DailyTrainService {
             dailySeatGenerateRequest.setTrainCode(train.getTrainCode());
             generate(dailySeatGenerateRequest);
         }
+    }
+
+    /**
+     * 查询列车
+     * @param startStation 出发站
+     * @param endStation 到达站
+     * @param date 乘车日期
+     */
+    public List<SectionQueryResponse> querySection(String startStation, String endStation, LocalDate date) {
+        // 检查车站是否存在
+        if (stationMapper.selectByName(startStation) == null || stationMapper.selectByName(endStation) == null) {
+            throw new BusinessException(ResponseEnum.STATION_NAME_NOT_EXIST);
+        }
+
+        List<Section> sections = dailyStopMapper.selectSection(startStation, endStation, date);
+        List<SectionQueryResponse> sectionQueryResponses = new ArrayList<>(sections.size());
+        for (Section section : sections) {
+            SectionQueryResponse sectionQueryResponse = BeanUtil.copyProperties(section, SectionQueryResponse.class);
+            DailyTrain dailyTrain = dailyTrainMapper.selectByDailyTrainId(section.getDailyTrainId());
+            sectionQueryResponse.setTrainCode(dailyTrain.getTrainCode());
+            sectionQueryResponses.add(sectionQueryResponse);
+        }
+        return sectionQueryResponses;
     }
 }

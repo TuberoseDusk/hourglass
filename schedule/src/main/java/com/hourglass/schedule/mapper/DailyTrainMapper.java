@@ -11,4 +11,6 @@ public interface DailyTrainMapper {
 
     DailyTrain selectByStartDateAndTrainCode(LocalDate startDate, String trainCode);
 
+    DailyTrain selectByDailyTrainId(Long dailyTrainId);
+
 }

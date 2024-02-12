@@ -12,9 +12,34 @@
         <result column="departure_time" jdbcType="TIMESTAMP" property="departureTime"/>
     </resultMap>
 
+    <resultMap id="SectionMap" type="com.hourglass.schedule.entity.Section">
+        <result column="daily_train_id" property="dailyTrainId"/>
+
+        <result column="start_daily_stop_id" property="startDailyStopId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="start_station" property="startStation"/>
+        <result column="start_stop_index" property="startStopIndex"/>
+
+        <result column="end_daily_stop_id" property="endDailyStopId"/>
+        <result column="end_time" property="endTime"/>
+        <result column="end_station" property="endStation"/>
+        <result column="end_stop_index" property="endStopIndex"/>
+    </resultMap>
+
     <insert id="insert" parameterType="com.hourglass.schedule.entity.DailyStop">
         insert into daily_stop (daily_stop_id, daily_train_id, stop_index, station_name, arrival_time, departure_time)
         values
         (#{dailyStopId}, #{dailyTrainId}, #{stopIndex}, #{stationName}, #{arrivalTime}, #{departureTime})
     </insert>
+
+    <select id="selectSection" resultMap="SectionMap">
+        select t1.daily_train_id as daily_train_id,
+            t1.daily_stop_id as start_daily_stop_id, t1.departure_time as start_time, t1.station_name as start_station, t1.stop_index as start_stop_index,
+            t2.daily_stop_id as end_daily_stop_id, t2.arrival_time as end_time, t2.station_name as end_station, t2.stop_index as end_stop_index from
+            (select * from daily_stop where station_name = #{startStation} and DATE(departure_time) = #{startDate}) as t1
+            left join
+            (select * from daily_stop where station_name = #{endStation} and arrival_time > #{startDate}) as t2
+            on t1.daily_train_id = t2.daily_train_id
+            where t1.stop_index &lt; t2.stop_index
+    </select>
 </mapper>

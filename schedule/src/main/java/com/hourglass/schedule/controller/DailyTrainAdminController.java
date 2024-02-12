@@ -2,13 +2,15 @@ package com.hourglass.schedule.controller;
 
 import com.hourglass.common.response.Response;
 import com.hourglass.schedule.request.DailySeatGenerateRequest;
+import com.hourglass.schedule.response.SectionQueryResponse;
 import com.hourglass.schedule.service.DailyTrainService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/daily/train")
@@ -28,6 +30,20 @@ public class DailyTrainAdminController {
             dailyTrainService.generate(dailySeatGenerateRequest);
         }
         return Response.success();
+    }
+
+    /**
+     * 查询可达线路
+     */
+    @GetMapping("/querySection/{startStation}/{endStation}/{date}")
+    public Response<List<SectionQueryResponse>> querySection(@PathVariable String startStation,
+                                                             @PathVariable String endStation,
+                                                             @PathVariable(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        List<SectionQueryResponse> sectionQueryResponses = dailyTrainService.querySection(startStation, endStation, date);
+        return Response.success(sectionQueryResponses);
     }
 
 }
