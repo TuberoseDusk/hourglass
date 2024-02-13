@@ -1,0 +1,29 @@
+server:
+  port: 7703
+  servlet:
+    context-path: /order
+
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.1.106:3306/hourglass?characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 192.168.1.106
+      port: 6379
+
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    local-cache-scope: statement
+
+logging:
+  level:
+    com:
+      hourglass:
+        ticket:
+          mapper: trace
+
+

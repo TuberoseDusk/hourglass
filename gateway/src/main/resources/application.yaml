@@ -1,0 +1,18 @@
+server:
+  port: 7700
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: schedule
+          uri: lb://schedule
+          predicates:
+            - Path=/schedule/**
+        - id: order
+          uri: lb://order
+          predicates:
+            - Path=/order/**
+        - id: ticket
+          uri: lb://ticket
+          predicates:
+            - Path=/ticket/**
