@@ -10,4 +10,6 @@ public interface SeatMapper {
     Integer insert(Seat seat);
 
     Integer insertBatch(List<Seat> seatList);
+
+    List<Seat> selectByDailyTrainId(Long dailyTrainId);
 }

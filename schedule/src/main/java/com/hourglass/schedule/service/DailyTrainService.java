@@ -8,6 +8,7 @@ import com.hourglass.common.util.Snowflake;
 import com.hourglass.schedule.entity.*;
 import com.hourglass.schedule.mapper.*;
 import com.hourglass.schedule.request.DailySeatGenerateRequest;
+import com.hourglass.schedule.response.DailyTrainQueryResponse;
 import com.hourglass.schedule.response.SectionQueryResponse;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -94,6 +95,7 @@ public class DailyTrainService {
         // 新增每日座位
         String[] carriageMarks = dailyTrain.getCarriages().split("-");
         List<Seat> seats = new ArrayList<>(carriageMarks.length * 200);
+        int seatCnt = 0;
         for (int i = 0; i < carriageMarks.length; i++) {
             Carriage carriage = carriageMapper.selectByType(Integer.parseInt(carriageMarks[i]));
             for (int row = 1; row <= carriage.getRowCount(); row++) {
@@ -105,7 +107,10 @@ public class DailyTrainService {
                     seat.setRowCount(row);
                     seat.setSeatId(Snowflake.nextId());
                     seat.setColumnMark(carriage.getSeatMark().charAt(j));
+                    seat.setSeatNumber(seatCnt);
+                    seat.setSeatType(carriage.getCarriageType());
                     seats.add(seat);
+                    seatCnt++;
                 }
             }
         }
@@ -145,5 +150,17 @@ public class DailyTrainService {
             sectionQueryResponses.add(sectionQueryResponse);
         }
         return sectionQueryResponses;
+    }
+
+    /**
+     *按照发车日期查询车次
+     */
+    public List<DailyTrainQueryResponse> queryDailyTrain(LocalDate date) {
+        List<DailyTrain> dailyTrains = dailyTrainMapper.selectByStartDate(date);
+        List<DailyTrainQueryResponse> dailyTrainQueryResponses = new ArrayList<>(dailyTrains.size());
+        for (DailyTrain dailyTrain : dailyTrains) {
+            dailyTrainQueryResponses.add(BeanUtil.copyProperties(dailyTrain, DailyTrainQueryResponse.class));
+        }
+        return dailyTrainQueryResponses;
     }
 }

@@ -1,11 +1,11 @@
-package com.hourglass.schedule.enums;
+package com.hourglass.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum CarriageTypeEnum {
+public enum SeatTypeEnum {
 
     G_BUSINESS(100, "高铁商务座"),
     G_FIRST(101, "高铁一等座"),

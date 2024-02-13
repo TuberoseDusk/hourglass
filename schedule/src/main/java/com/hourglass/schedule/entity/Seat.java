@@ -16,4 +16,7 @@ public class Seat {
     private Character columnMark;
 
     private String seatState;
+
+    private Integer seatNumber;
+    private Integer seatType;
 }

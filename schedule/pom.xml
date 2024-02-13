@@ -22,13 +22,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <dependency>
-            <groupId>com.hourglass</groupId>
-            <artifactId>common</artifactId>
-        </dependency>
-
-
     </dependencies>
 
     <build>

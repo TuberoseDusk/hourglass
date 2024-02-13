@@ -10,6 +10,8 @@
         <result column="row_count" property="rowCount"/>
         <result column="column_mark" property="columnMark"/>
         <result column="seat_state" property="seatState"/>
+        <result column="seat_number" property="seatNumber"/>
+        <result column="seat_type" property="seatType"/>
     </resultMap>
 
     <insert id="insert" parameterType="com.hourglass.schedule.entity.Seat">
@@ -20,15 +22,20 @@
             <if test="carriageIndex != null">carriage_index = #{carriageIndex},</if>
             <if test="rowCount != null">row_count = #{rowCount},</if>
             <if test="columnMark != null">column_mark = #{columnMark},</if>
-            <if test="seatState != null">seat_state = #{seatState}</if>
+            <if test="seatState != null">seat_state = #{seatState},</if>
+            <if test="seatNumber != null">seat_number = #{seatNumber},</if>
+            <if test="seatType != null">seat_type = #{seatType}</if>
         </set>
     </insert>
 
     <insert id="insertBatch" parameterType="java.util.List">
-        insert into seat (seat_id, daily_train_id, carriage_index, row_count, column_mark, seat_state) values
+        insert into seat (seat_id, daily_train_id, carriage_index, row_count, column_mark, seat_state, seat_number, seat_type) values
             <foreach collection="seatList" item="seat" separator=",">
-                (#{seat.seatId}, #{seat.dailyTrainId}, #{seat.carriageIndex}, #{seat.rowCount}, #{seat.columnMark}, #{seat.seatState})
+                (#{seat.seatId}, #{seat.dailyTrainId}, #{seat.carriageIndex}, #{seat.rowCount}, #{seat.columnMark}, #{seat.seatState}, #{seat.seatNumber}, #{seat.seatType})
             </foreach>
     </insert>
+    <select id="selectByDailyTrainId" resultMap="SeatMap">
+        select * from seat where daily_train_id = #{dailyTrainId} order by seat_number
+    </select>
 
 </mapper>
