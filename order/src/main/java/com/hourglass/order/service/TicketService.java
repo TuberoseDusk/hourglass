@@ -104,25 +104,10 @@ public class TicketService {
     /**
      *查询乘车线路的剩余票数
      */
-    public TicketQueryResponse query(SectionQueryResponse sectionQueryResponse) {
-        Long dailyTrainId = sectionQueryResponse.getDailyTrainId();
+    public Map<String, Integer> queryTicket(Long dailyTrainId, Integer startStopIndex, Integer endStopIndex) {
 
-        // 获取途径站点的座位状态
-        List<BitSet> ticketStates = new ArrayList<>(sectionQueryResponse.getEndStopIndex() - sectionQueryResponse.getStartStopIndex());
-        for (Integer stopIndex = sectionQueryResponse.getStartStopIndex(); stopIndex < sectionQueryResponse.getEndStopIndex(); stopIndex++) {
-            BitSet ticketState = ticketRepository.selectTicketOfDailyTrainAtStation(dailyTrainId, stopIndex);
-            if (ticketState == null) {
-                // 对应车站的座位信息不存在
-                throw new BusinessException(ResponseEnum.SEAT_INFORMATION_NOT_EXIST);
-            }
-            ticketStates.add(ticketState);
-        }
-
-        // 执行与运算，得到空闲座位
-        BitSet ticket = ticketStates.remove(ticketStates.size() - 1);
-        for (BitSet ticketState : ticketStates) {
-            ticket.and(ticketState);
-        }
+        // 获取座位状态
+        BitSet ticket = selectTicketState(dailyTrainId, startStopIndex, endStopIndex);
 
         // 保存座位类型
         Map<String, Integer> availableSeats = new HashMap<>();
@@ -138,10 +123,52 @@ public class TicketService {
 
             availableSeats.put(seatTypeEnum.getMsg(), seatMask.cardinality());
         }
+        return availableSeats;
+    }
 
-        TicketQueryResponse ticketQueryResponse = BeanUtil.copyProperties(sectionQueryResponse, TicketQueryResponse.class);
-        ticketQueryResponse.setAvailableTicket(availableSeats);
-        return ticketQueryResponse;
+    /**
+     * 扣库存
+     */
+    public Integer decreaseTicket(Long dailyTrainId, Integer startStopIndex, Integer endStopIndex, String seatTypeMark) {
+        // 获取座位状态
+        BitSet ticket = selectTicketState(dailyTrainId, startStopIndex, endStopIndex);
+        for (SeatTypeEnum seatTypeEnum : SeatTypeEnum.values()) {
+            if (seatTypeEnum.getMsg().equals(seatTypeMark)) {
+                // 找到对应座位类型
+                BitSet seatTypeMask = seatTypeRepository.selectSeatTypeMask(dailyTrainId, seatTypeEnum.getType());
+                ticket.and(seatTypeMask);   // 与运算得到对应座位类型余票
+
+                // 第一个可用位置
+                int seatNumber = ticket.nextSetBit(0);
+
+                // 修改 [startStop, EndStop) 之间的座位状态
+                for (int stopIndex = startStopIndex; stopIndex < endStopIndex; stopIndex++) {
+                    ticketRepository.occupyTicketOfDailyTrainAtStation(dailyTrainId, stopIndex, seatNumber);
+                }
+                return seatNumber;
+            }
+        }
+        return null;
+    }
+
+    private BitSet selectTicketState(Long dailyTrainId, Integer startStopIndex, Integer endStopIndex) {
+        // 获取途径站点的座位状态
+        List<BitSet> ticketStates = new ArrayList<>(endStopIndex - startStopIndex);
+        for (Integer stopIndex = startStopIndex; stopIndex < endStopIndex; stopIndex++) {
+            BitSet ticketState = ticketRepository.selectTicketOfDailyTrainAtStation(dailyTrainId, stopIndex);
+            if (ticketState == null) {
+                // 对应车站的座位信息不存在
+                throw new BusinessException(ResponseEnum.SEAT_INFORMATION_NOT_EXIST);
+            }
+            ticketStates.add(ticketState);
+        }
+
+        // 执行与运算，得到空闲座位
+        BitSet ticket = ticketStates.remove(ticketStates.size() - 1);
+        for (BitSet ticketState : ticketStates) {
+            ticket.and(ticketState);
+        }
+        return ticket;
     }
 
     public List<TicketQueryResponse> query(String startStation, String endStation, LocalDate date) {
@@ -152,7 +179,12 @@ public class TicketService {
 
         List<TicketQueryResponse> ticketQueryResponses = new ArrayList<>(sectionRes.getData().size());
         for (SectionQueryResponse sectionQueryResponse : sectionRes.getData()) {
-            TicketQueryResponse ticketQueryResponse = query(sectionQueryResponse);
+            Map<String, Integer> availableTickets= queryTicket(
+                    sectionQueryResponse.getDailyTrainId(),
+                    sectionQueryResponse.getStartStopIndex(),
+                    sectionQueryResponse.getEndStopIndex());
+            TicketQueryResponse ticketQueryResponse = BeanUtil.copyProperties(sectionQueryResponse, TicketQueryResponse.class);
+            ticketQueryResponse.setAvailableTicket(availableTickets);
             ticketQueryResponses.add(ticketQueryResponse);
         }
         return ticketQueryResponses;

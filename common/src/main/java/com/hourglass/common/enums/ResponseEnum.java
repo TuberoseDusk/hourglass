@@ -18,7 +18,11 @@ public enum ResponseEnum {
     TRAIN_CODE_NOT_EXIST(1005, "列车号不存在"),
     ILLEGAL_STOP_INDEX(1006, "停靠站序号非法"),
     CARRIAGE_TYPE_NOT_EXIST(1007, "车厢类型不存在"),
-    SEAT_INFORMATION_NOT_EXIST(3001, "座位信息不存在");
+    SEAT_INFORMATION_NOT_EXIST(3001, "座位信息不存在"),
+    SEAT_TYPE_NO_PROVIDE(3002, "车次不提供该坐席"),
+    SEAT_SOLD_OUT(3003, "车票售罄"),
+    ORDER_LOCK_ERROR(3004, "获取订单锁失败"),
+    SEAT_ASSIGN_ERROR(3005, "分配坐席失败");
 
     private final Integer code;
     private final String msg;

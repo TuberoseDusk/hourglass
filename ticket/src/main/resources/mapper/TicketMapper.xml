@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hourglass.ticket.mapper.TicketMapper">
+    <resultMap id="TicketMap" type="com.hourglass.ticket.entity.Ticket">
+        <id column="ticket_id" property="ticketId"/>
+
+        <result column="user_id" property="userId"/>
+
+        <result column="daily_train_id" property="dailyTrainId"/>
+        <result column="train_code" property="trainCode"/>
+
+        <result column="seat_number" property="seatNumber"/>
+        <result column="row_count" property="rowCount"/>
+        <result column="column_mark" property="columnMark"/>
+
+        <result column="start_daily_stop_id" property="startDailyStopId"/>
+        <result column="start_stop_index" property="startStopIndex"/>
+        <result column="start_time" property="startTime"/>
+        <result column="start_station" property="startStation"/>
+
+        <result column="end_daily_stop_id" property="endDailyStopId"/>
+        <result column="end_stop_index" property="endStopIndex"/>
+        <result column="end_time" property="endTime"/>
+        <result column="end_station" property="endStation"/>
+
+        <result column="order_id" property="orderId"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.hourglass.ticket.entity.Ticket">
+        insert into ticket
+            (ticket_id, user_id, daily_train_id, train_code, seat_number, row_count, column_mark, start_daily_stop_id, start_stop_index, start_time, start_station, end_daily_stop_id, end_stop_index, end_time, end_station, order_id)
+            values
+            (#{ticketId}, #{userId}, #{dailyTrainId}, #{trainCode}, #{seatNumber}, #{rowCount}, #{columnMark},
+        #{startDailyStopId}, #{startStopIndex}, #{startTime}, #{startStation}, #{endDailyStopId}, #{endStopIndex},
+        #{endTime}, #{endStation}, #{orderId})
+    </insert>
+
+
+</mapper>

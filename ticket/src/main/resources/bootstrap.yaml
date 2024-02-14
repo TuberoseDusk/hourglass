@@ -8,9 +8,7 @@ spring:
         password: nacos
         group: DEFAULT_GROUP
   application:
-    name: order
+    name: ticket
 
 rocketmq:
   name-server: 192.168.1.106:9876
-  producer:
-    group: default

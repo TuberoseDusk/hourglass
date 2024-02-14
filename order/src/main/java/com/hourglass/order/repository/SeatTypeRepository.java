@@ -41,6 +41,16 @@ public class SeatTypeRepository {
         if (!bitSet.isExists()) {
             return null;
         }
-        return BitSet.valueOf(bitSet.toByteArray());
+        byte[] bytes = bitSet.toByteArray();
+
+        // redis的BitMap二进制存储结构从左往右
+        // java的BitSet二进制存储结构从右往左
+        BitSet bits = new BitSet();
+        for (int i = 0; i < bytes.length * 8; i++) {
+            if ((bytes[i / 8] & (1 << (7 - (i % 8)))) != 0) {
+                bits.set(i);
+            }
+        }
+        return bits;
     }
 }

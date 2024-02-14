@@ -8,6 +8,7 @@ import com.hourglass.common.util.Snowflake;
 import com.hourglass.schedule.entity.*;
 import com.hourglass.schedule.mapper.*;
 import com.hourglass.schedule.request.DailySeatGenerateRequest;
+import com.hourglass.schedule.response.DailyStopResponse;
 import com.hourglass.schedule.response.DailyTrainQueryResponse;
 import com.hourglass.schedule.response.SectionQueryResponse;
 import jakarta.annotation.Resource;
@@ -162,5 +163,15 @@ public class DailyTrainService {
             dailyTrainQueryResponses.add(BeanUtil.copyProperties(dailyTrain, DailyTrainQueryResponse.class));
         }
         return dailyTrainQueryResponses;
+    }
+
+    public DailyTrainQueryResponse queryDailyTrainById(Long dailyTrainId) {
+        DailyTrain dailyTrain = dailyTrainMapper.selectByDailyTrainId(dailyTrainId);
+        return BeanUtil.copyProperties(dailyTrain, DailyTrainQueryResponse.class);
+    }
+
+    public DailyStopResponse queryDailyStop(Long dailyTrainId, Integer stopIndex) {
+        DailyStop dailyStop = dailyStopMapper.selectByDailyTrainIdAndStopIndex(dailyTrainId, stopIndex);
+        return BeanUtil.copyProperties(dailyStop, DailyStopResponse.class);
     }
 }

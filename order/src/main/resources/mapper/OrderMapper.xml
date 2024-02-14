@@ -8,8 +8,9 @@
         <result column="user_id" property="userId"/>
         <result column="order_state" property="orderState"/>
     </resultMap>
-    <insert id="insert" parameterType="com.hourglass.order.entity.Order">
-        insert into order
+
+        <insert id="insert" parameterType="com.hourglass.order.entity.Order">
+        insert into indent
             <set>
                 <if test="orderId != null">order_id = #{orderId},</if>
                 <if test="userId != null">user_id = #{userId},</if>
@@ -17,7 +18,7 @@
             </set>
     </insert>
     <update id="updateStateByOrderId">
-        update order set order_state = #{orderState} where order_id = #{orderId}
+        update indent set order_state = #{orderState} where order_id = #{orderId}
     </update>
 
 

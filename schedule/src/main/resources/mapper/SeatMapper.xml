@@ -34,8 +34,17 @@
                 (#{seat.seatId}, #{seat.dailyTrainId}, #{seat.carriageIndex}, #{seat.rowCount}, #{seat.columnMark}, #{seat.seatState}, #{seat.seatNumber}, #{seat.seatType})
             </foreach>
     </insert>
+    <update id="updateSeatState">
+        update seat set seat_state = #{seatState} where seat_id = #{seatId}
+    </update>
     <select id="selectByDailyTrainId" resultMap="SeatMap">
         select * from seat where daily_train_id = #{dailyTrainId} order by seat_number
+    </select>
+    <select id="selectByDailyTrainIdAndSeatNumber" resultMap="SeatMap">
+        select * from seat where daily_train_id = #{dailyTrainId} and seat_number = #{seatNumber}
+    </select>
+    <select id="selectBySeatId" resultMap="SeatMap">
+        select * from seat where seat_id = #{seatId}
     </select>
 
 </mapper>

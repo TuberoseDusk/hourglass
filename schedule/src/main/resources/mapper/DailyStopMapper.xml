@@ -42,4 +42,7 @@
             on t1.daily_train_id = t2.daily_train_id
             where t1.stop_index &lt; t2.stop_index
     </select>
+    <select id="selectByDailyTrainIdAndStopIndex" resultMap="DailyStopMap">
+        select * from daily_stop where daily_train_id = #{dailyTrainId} and stop_index = #{stopIndex}
+    </select>
 </mapper>

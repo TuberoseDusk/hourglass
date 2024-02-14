@@ -12,4 +12,6 @@ public interface DailyStopMapper {
     Integer insert(DailyStop dailyStop);
 
     List<Section> selectSection(String startStation, String endStation, LocalDate startDate);
+
+    DailyStop selectByDailyTrainIdAndStopIndex(Long dailyTrainId, Integer stopIndex);
 }

@@ -2,6 +2,7 @@ package com.hourglass.schedule.controller;
 
 import com.hourglass.common.response.Response;
 import com.hourglass.schedule.request.DailySeatGenerateRequest;
+import com.hourglass.schedule.response.DailyStopResponse;
 import com.hourglass.schedule.response.DailyTrainQueryResponse;
 import com.hourglass.schedule.response.SectionQueryResponse;
 import com.hourglass.schedule.service.DailyTrainService;
@@ -50,8 +51,24 @@ public class DailyTrainAdminController {
     /**
      * 按发车日期查询所有车次
      */
-    @GetMapping("queryDailyTrain/{date}")
+    @GetMapping("/queryDailyTrain/{date}")
     public Response<List<DailyTrainQueryResponse>> queryDailyTrain(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         return Response.success(dailyTrainService.queryDailyTrain(date));
+    }
+
+    /**
+     * 按id查询车次
+     */
+    @GetMapping("/queryDailyTrainById/{dailyTrainId}")
+    public Response<DailyTrainQueryResponse> queryDailyTrainById(@PathVariable Long dailyTrainId) {
+        return Response.success(dailyTrainService.queryDailyTrainById(dailyTrainId));
+    }
+
+    /**
+     * 按车次id和停站序号查停站信息
+     */
+    @GetMapping("/queryDailyStop/{dailyTrainId}/{stopIndex}")
+    public Response<DailyStopResponse> queryDailyStop(@PathVariable Long dailyTrainId, @PathVariable Integer stopIndex) {
+        return Response.success(dailyTrainService.queryDailyStop(dailyTrainId, stopIndex));
     }
 }
