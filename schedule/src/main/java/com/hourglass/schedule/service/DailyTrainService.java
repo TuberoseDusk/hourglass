@@ -7,6 +7,7 @@ import com.hourglass.common.exception.BusinessException;
 import com.hourglass.common.util.Snowflake;
 import com.hourglass.schedule.entity.*;
 import com.hourglass.schedule.mapper.*;
+import com.hourglass.schedule.repository.SectionRepository;
 import com.hourglass.schedule.request.DailySeatGenerateRequest;
 import com.hourglass.schedule.response.DailyStopResponse;
 import com.hourglass.schedule.response.DailyTrainQueryResponse;
@@ -44,6 +45,9 @@ public class DailyTrainService {
 
     @Resource
     private StationMapper stationMapper;
+
+    @Resource
+    private SectionRepository sectionRepository;
 
     /**
      *按照基础数据创建每日列车数据
@@ -137,19 +141,29 @@ public class DailyTrainService {
      * @param date 乘车日期
      */
     public List<SectionQueryResponse> querySection(String startStation, String endStation, LocalDate date) {
+
+        // 查询缓存
+        List<SectionQueryResponse> sectionQueryResponses = sectionRepository.get(date, startStation, endStation);
+        if (sectionQueryResponses != null) {
+            return sectionQueryResponses;
+        }
+
         // 检查车站是否存在
         if (stationMapper.selectByName(startStation) == null || stationMapper.selectByName(endStation) == null) {
             throw new BusinessException(ResponseEnum.STATION_NAME_NOT_EXIST);
         }
 
         List<Section> sections = dailyStopMapper.selectSection(startStation, endStation, date);
-        List<SectionQueryResponse> sectionQueryResponses = new ArrayList<>(sections.size());
+        sectionQueryResponses = new ArrayList<>(sections.size());
         for (Section section : sections) {
             SectionQueryResponse sectionQueryResponse = BeanUtil.copyProperties(section, SectionQueryResponse.class);
             DailyTrain dailyTrain = dailyTrainMapper.selectByDailyTrainId(section.getDailyTrainId());
             sectionQueryResponse.setTrainCode(dailyTrain.getTrainCode());
             sectionQueryResponses.add(sectionQueryResponse);
         }
+
+        // 设置缓存
+        sectionRepository.put(date, startStation, endStation, sectionQueryResponses);
         return sectionQueryResponses;
     }
 
